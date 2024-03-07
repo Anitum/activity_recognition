@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 
 video_capture = cv2.VideoCapture(0)
-
+#cv2.imshow("video",video_capture)
 
 def add_teacher_info():
     name = input("Enter teacher's name: ")
@@ -17,51 +17,6 @@ def add_teacher_info():
     # Get the current directory of the script
     current_directory = os.path.dirname(__file__)
     
-    # Relative path to the JSON file
-    json_file_path = os.path.join(current_directory, "teachers_info.json")
-
-    # Check if the JSON file exists
-    if os.path.exists(json_file_path):
-        with open(json_file_path, 'r') as f:
-            data = json.load(f)
-    else:
-        data = {"teachers": []}
-
-    # Append new teacher information to the list of teachers
-    data["teachers"].append({"name": name, "photo_path": photo_path, "entry_time": []})
-
-    # Write updated data back to the JSON file
-    with open(json_file_path, 'w') as f:
-        json.dump(data, f, indent=4)
-    
-    print("Teacher information added successfully.")
-    return name, photo_path,json_file_path
-
-
-def delete_teacher_info(name):
-    current_directory = os.path.dirname(__file__)
-    json_file_path = os.path.join(current_directory, "teachers_info.json")
-
-    with open(json_file_path, 'r') as f:
-        data = json.load(f)
-    
-    if name in data:
-        del data[name]
-        print(f"Teacher '{name}' information deleted successfully.")
-    else:
-        print(f"Teacher '{name}' not found.")
-
-    with open(json_file_path, 'w') as f:
-        json.dump(data, f, indent=4)
-
-# Example usage:
-add_teacher_info()
-# delete_teacher_info("John Doe")
-pathhh = add_teacher_info()[2]
-
-
-def add_known_face(name, photo_path):
-    # Load the image file
     image = face_recognition.load_image_file(photo_path)
 
     # Find face encodings in the image
@@ -97,15 +52,37 @@ def add_known_face(name, photo_path):
         with open(json_file_path, 'w') as f:
             json.dump(data, f, indent=4)
         
-        print("Teacher information added successfully.")
+        print("Encoded!.")
     else:
         print("Error: Unable to detect a single face in the provided image.")
-        
+    return json_file_path
+
+
+def delete_teacher_info(name):
+    current_directory = os.path.dirname(__file__)
+    json_file_path = os.path.join(current_directory, "teachers_info.json")
+
+    with open(json_file_path, 'r') as f:
+        data = json.load(f)
+    
+    if name in data:
+        del data[name]
+        print(f"Teacher '{name}' information deleted successfully.")
+    else:
+        print(f"Teacher '{name}' not found.")
+
+    with open(json_file_path, 'w') as f:
+        json.dump(data, f, indent=4)
+
+
+#                          CODE STARTS FROM HERE                          #
+
+pathhh = add_teacher_info()
 # Example usage:
 data = json.load(open(pathhh, 'r'))
 known_teacher_names = [teacher["name"] for teacher in data["teachers"]]
-known_teacher_encodings = [np.array(teacher["known_face_encodings"]) for teacher in data["teachers"]]
-
+known_teacher_encodings = [np.array(teacher["known_face_encodings"]) for teacher in data["teachers"]] 
+#known_teacher_encodings = [teacher.get("known_face_encodings", []) for teacher in data["teachers"]]
 # Now you can use the known_face_encodings and known_face_names lists
 
 Teachers = known_teacher_names.copy()
@@ -128,6 +105,7 @@ while True:
     _,frame = video_capture.read()
     small_frame = cv2.resize(frame,(0,0),fx=0.25,fy=0.25)
     rgb_small_frame = small_frame[:,:,::-1]
+    breakpoint()
     if s:
         face_locations = face_recognition.face_locations(rgb_small_frame)
         face_encodings = face_recognition.face_encodings(rgb_small_frame,face_locations)
@@ -169,3 +147,4 @@ while True:
 video_capture.release()
 cv2.destroyAllWindows()
 f.close()
+
