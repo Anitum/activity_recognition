@@ -103,7 +103,7 @@ def process_camera(i):
         key = cv2.waitKey(delay_ms) & 0xFF
 
         # Exit loop if 'q' is pressed
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if key == ord('q'):
             break
     Teachers.clear()
     # Release handle to the webcam and close CSV file
