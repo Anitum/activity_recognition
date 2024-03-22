@@ -8,18 +8,7 @@ from datetime import datetime
 from multiprocessing import Process
 import time
 
-def copy_csv_to_bigger_file(source_csv, target_csv):
-    # Open the source CSV file for reading
-    with open(source_csv, 'r', newline='') as source_file:
-        reader = csv.reader(source_file)
-        data_to_copy = list(reader)  # Read all data from the source CSV into a list
-    
-    # Open the target CSV file for appending
-    with open(target_csv, 'a', newline='') as target_file:
-        writer = csv.writer(target_file)
-        
-        # Write the data from the source CSV to the target CSV
-        writer.writerows(data_to_copy)
+
 
 def process_camera(i):
     video_capture = cv2.VideoCapture(i)         
@@ -28,7 +17,7 @@ def process_camera(i):
     known_teacher_names = []
     known_teacher_encodings = []
     known_ID = []
-    desired_fps = 10
+    desired_fps = 20
 
     for teacher in data["teachers"]:
         known_teacher_names.append(teacher["name"])
@@ -44,7 +33,7 @@ def process_camera(i):
     current_date = now.strftime("%Y-%m-%d")
     f = open(current_date+'.csv','w+',newline = '')
     lnwriter = csv.writer(f)
-
+    Teachers.clear()
     while True:
         start_time = time.time() 
         ret, frame = video_capture.read()
@@ -68,12 +57,15 @@ def process_camera(i):
                 ID  = known_ID[matched_index]
                 
                 # Check if the teacher has already been marked within the last hour
-                if name not in Teachers:
-                    # Write attendance to CSV
-                    current_time = now.strftime("%H:%M:%S")
-                    current_date = now.strftime("%Y-%m-%d")
-                    lnwriter.writerow([name,ID,'ENTRY', current_time, current_date])
-                    Teachers.append(name)
+                if name not in Teachers :
+                    with open(current_date+'.csv', 'r') as csv_file:
+                        csv_reader = csv.reader(csv_file)
+                        for row in csv_reader:
+                            if not(row[0] == name and row[1] == 'ENTRY') or (row[0] == name and row[1] == 'EXIT'):
+                                current_time = now.strftime("%H:%M:%S")
+                                current_date = now.strftime("%Y-%m-%d")
+                                lnwriter.writerow([name,ID,'ENTRY', current_time, current_date])
+                                Teachers.append(name)
                 
                 # ''' ( EXIT Functionality - hold for now, computationally heavy )
                 if name in Teachers:
@@ -101,46 +93,35 @@ def process_camera(i):
         processing_time = time.time() - start_time
         delay_ms = max(1, int((1 / desired_fps - processing_time) * 1000))
         key = cv2.waitKey(delay_ms) & 0xFF
-
+        time.sleep(delay_ms)
         # Exit loop if 'q' is pressed
         if key == ord('q'):
             break
-    Teachers.clear()
+    
     # Release handle to the webcam and close CSV file
     csv_file = open(current_date+'.csv','w+',newline = '')
     lnwriter = csv.writer(csv_file)
 
     video_capture.release()
     csv_file.close()
-
-    video_capture.release()
     cv2.destroyAllWindows()
     f.close()
 
 def start_camera_processes():
     processes = []
-    selecting = 'y'
-    #while selecting == 'y' or selecting == 'Y':
-    i = (input("Please select the camera number 0 or the IP of the camera: "))
-    p = Process(target=process_camera, args=(int(i),))
-    p.start()
-    processes.append(p)
-    #selecting = input("Do you want to select another camera? (y/n) : ")
-    i = 'http://172.17.75.22:4747/video'
-    p = Process(target=process_camera, args=(i,))
-    p.start()
-    processes.append(p)
-
+    with open('cameras.csv', 'r') as csv_file:
+        csv_reader = csv.reader(csv_file)        
+        for row in csv_reader:
+            i = str(row[1])
+            p = Process(target=process_camera, args=(i,))
+            p.start()
+            processes.append(p)
+            print('process started for camera', i)
 
     for p in processes:
         p.join()
-
+    
 if __name__ == "__main__":
     start_camera_processes()
 
 
-now = datetime.now()
-current_date = now.strftime("%Y-%m-%d")
-per_day = (current_date+'.csv')
-Downloaded_Attendance_path = r"D:\face_rec\Downloaded_Attendance.csv"
-copy_csv_to_bigger_file(source_csv= per_day, target_csv=Downloaded_Attendance_path)
