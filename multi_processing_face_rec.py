@@ -1,3 +1,5 @@
+#Please run and check this once with appropritate camera csv file
+
 import face_recognition
 import cv2
 import numpy as np
