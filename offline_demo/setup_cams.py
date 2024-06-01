@@ -7,15 +7,7 @@ import threading
 import os
 
 """
-
-ERROR:
-invalid command name "131383654270784update_frame"
-    while executing
-"131383654270784update_frame"
-    ("after" script)
-      
-WHILE CLOSING 
-
+this give error if cam seleted have more have same entries twice 
 """
 
 
@@ -315,7 +307,7 @@ class App:
 
     # Call the function to write headers
     def write_headers_to_csv(self):
-        with open(self.file_name, mode='w', newline='') as file:
+        with open(self.file_name, mode='w', newline='') as file:    
             writer = csv.writer(file, quoting=csv.QUOTE_NONE)
             writer.writerow(["Name", "Path"])
             
