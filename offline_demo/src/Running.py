@@ -1,8 +1,6 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-import history
-import contactus
-import removing
+
 
 class Running:
     def __init__(self):
@@ -14,7 +12,7 @@ class Running:
         self.root.grid_columnconfigure(0, weight=1)
 
         # importing logo image
-        self.logo = Image.open("GuiApp/build/assets/Logo.png")
+        self.logo = Image.open("offline_demo/data/Logo.png")
         # resizing in proportion
         width, height = self.logo.size
         div_ration = 6
