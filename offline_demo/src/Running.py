@@ -1,5 +1,8 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+import history
+import contactus
+import removing
 
 class Running:
     def __init__(self):
@@ -71,7 +74,7 @@ class Running:
     
     def seehistory(self):
         self.root.destroy()
-        import history
+        
         history = history.history()
         history.root.mainloop()
         print("See history")
@@ -101,7 +104,7 @@ class Running:
 
     def remove_emp(self):
         self.root.destroy()
-        import removing
+        
         removing = removing.Removing()
         removing.root.mainloop()
 
@@ -115,7 +118,6 @@ class Running:
     
     def contact(self):
         self.root.destroy()
-        import contactus
         contactus = contactus.ContactUs()
         contactus.root.mainloop()
         

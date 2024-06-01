@@ -2,6 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from tkinter import messagebox
 import csv
+import Running
 
 
 #Todo: Reduce both time and space complexity of the code it is makeing two copy of empdata one as list and other as dict resolve it 
@@ -101,7 +102,7 @@ class Removing:
     def back(self):
         self.root.quit()
         self.root.destroy()
-        import Running
+
         running = Running.Running()
         running.root.mainloop()
 
