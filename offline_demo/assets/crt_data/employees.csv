@@ -1,0 +1,11 @@
+name,emp_id,ph_no,img_path
+John Doe,1001,1234567890,images/john_doe.jpg
+Jane Smith,1002,9876543210,images/jane_smith.jpg
+Alice Johnson,1003,5551234567,images/alice_johnson.jpg
+Bob Williams,1004,4449876543,images/bob_williams.jpg
+Elon Musk,1005,7895551234,/home/mridul/imp/photos/musk.jpg
+Michael Davis,1006,3334445555,images/michael_davis.jpg
+Sophia Miller,1007,2228889999,images/sophia_miller.jpg
+David Wilson,1008,6661112222,images/david_wilson.jpg
+Olivia Taylor,1009,9996663333,images/olivia_taylor.jpg
+James Anderson,1010,7772223333,images/james_anderson.jpg

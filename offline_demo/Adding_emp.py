@@ -4,6 +4,19 @@ import cv2
 import csv
 import time
 import threading
+import os
+
+"""
+
+ERROR:
+invalid command name "131383654270784update_frame"
+    while executing
+"131383654270784update_frame"
+    ("after" script)
+      
+WHILE CLOSING 
+
+"""
 
 
 class MyVideoCapture:
@@ -160,24 +173,30 @@ class tkCamera(tk.Frame):
             self.root.after(self.delay, self.update_frame)
 
 
-class App:
+class Adding_emp:
 
     def __init__(self, sources):
         self.selected = []
+        
+        # Read if there are already cam listed in the file if file not found or it is empty the write fiel 
 
-    
-        with open('GuiApp/build/assets/crt_data/cam_selected.csv', mode='w', newline='') as file:
-            writer = csv.writer(file, quoting=csv.QUOTE_NONE)
-            writer.writerow(["name", "path"])
+        self.file_name = 'GuiApp/build/assets/crt_data/cam_selected.csv'
+        
+        # Check if the file exists
+        if os.path.exists(self.file_name):
+            self.read_existing_data()
+        else:   
+            self.write_headers_to_csv()
+
 
         self.root = tk.Tk()
-        root_title = ("Tkinter and OpenCV")
+        root_title = ("Adding employ")
 
          
         self.root.title(root_title)
 
-        # dividing root in 3 x 1 grid
-        self.root.grid_rowconfigure([0, 1, 2], weight=1)
+        # dividing root in 4 x 1 grid
+        self.root.grid_rowconfigure([0, 1, 2, 3, 4], weight=1)
         self.root.grid_columnconfigure(0, weight=1)
 
         # importing logo image
@@ -203,39 +222,56 @@ class App:
         self.logo_label.config(width=50, height=10)
 
         # making a label for contact us texr
-        self.Running_txt = tk.Label(self.frame0, text="Select the Camera feed", font=("Arial", 16), padx=10, pady=10, justify="center")
-        self.Running_txt.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
+        self.Running_txt = tk.Label(self.frame0, text="Adding Employ", font=("Arial", 16), padx=10, pady=10, justify="center")
+        self.Running_txt.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
+        #making frame for 1 row 
 
+        # making a frame for 0 th row
+        self.frame1 = tk.Frame(self.root)
+        self.frame1.grid(row=0, column=0, sticky="nsew")
 
-        video_sources = sources
-        self.root.title(root_title)
+        # dividing frame0 in 1 x 2 grid
+        self.frame1.grid_rowconfigure([0,1], weight=1)
+        self.frame1.grid_columnconfigure(0, weight=1)
+
+        # adding lable 
+        self.emp_name = tk.Label(self.frame0, image=self.logo)
         
-        self.vids = []
 
-        columns = 2
-        for number, source in enumerate(video_sources):
-            text, stream = source
-            vid = tkCamera(self.root, text, stream, 400, 300,source)
-            x = number % columns
-            y = number // columns
-            vid.grid(row=y+1, column=x)
-            self.vids.append(vid)
-        
-        #if i close the window it kills the threads and with ctrl+c it kills the threads and also if next or back button is pressed
-        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
-        self.root.bind("<Control-q>", self.on_closing)
-        self.root.bind("<Control-c>", self.on_closing)
-        
-        
-        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
-        self.root.bind("<Control-q>", self.on_closing)
 
-        # adding next and previous button
-        self.next_btn = tk.Button(self.root, text="Next", command=self.next)
-        self.next_btn.grid(row=len(video_sources)+2, column=0, sticky="nsew")
-        self.back_btn = tk.Button(self.root, text="Back", command=self.back)
-        self.back_btn.grid(row=len(video_sources)+2, column=1, sticky="nsew")
+
+
+        # video_sources = sources
+        # self.root.title(root_title)
+        
+        # self.vids = []
+
+        # columns = 2
+        # for number, source in enumerate(video_sources):
+        #     text, stream = source
+        #     vid = tkCamera(self.root, text, stream, 400, 300,source)
+        #     x = number % columns
+        #     y = number // columns
+        #     vid.grid(row=y+1, column=x)
+        #     self.vids.append(vid)
+        
+        # #if i close the window it kills the threads and with ctrl+c it kills the threads and also if next or back button is pressed
+        # self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+        # self.root.bind("<Control-q>", self.on_closing)
+        # self.root.bind("<Control-c>", self.on_closing)
+        
+        
+        # self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+        # self.root.bind("<Control-q>", self.on_closing)
+
+        # self.lastrow = len(video_sources)+2
+
+        # # adding next and previous button
+        # self.next_btn = tk.Button(self.root, text="Next", command=self.next)
+        # self.next_btn.grid(row=self.lastrow, column=0, sticky="nsew")
+        # self.back_btn = tk.Button(self.root, text="Back", command=self.back)
+        # self.back_btn.grid(row=self.lastrow, column=1, sticky="nsew")
     
     def next(self):
         # first check if something is selected or not 
@@ -246,6 +282,9 @@ class App:
                 self.selected.append(row)
         if len(self.selected) == 0:
             print('Please select atleast one camera feed')
+            label = tk.Label(self.root, text="Please select atleast one camera feed", font=("Arial", 12), padx=10, pady=10, justify="center")
+            label.grid(row=self.lastrow+1, column=0, columnspan=2, sticky="nsew")
+    
         else:
             self.on_closing()
             import Running
@@ -274,22 +313,51 @@ class App:
     
         print('[App] exit')
         self.root.destroy()
+    # Function to read existing data from CSV file
+        
+    def read_existing_data(self):
+        with open(self.file_name, mode='r') as file:
+            # if file have more than one line 
+         
+            reader = csv.reader(file)
+            try:
+                next(reader)  # Skip header row
+                for row in reader:
+                    self.selected.append((row[0], row[1]))
+            except:
+                self.write_headers_to_csv()
+
+
+    # Call the function to write headers
+    def write_headers_to_csv(self):
+        with open(self.file_name, mode='w', newline='') as file:
+            writer = csv.writer(file, quoting=csv.QUOTE_NONE)
+            writer.writerow(["Name", "Path"])
+            
 
 if __name__ == '__main__':     
 
         
-    # Create a root and pass it to the Application object
 
-   
-    sources = [
-        ('me', 0), 
-        # ('Zakopane, Poland', 'https://imageserver.webcamera.pl/rec/krupowki-srodek/latest.mp4'),
-        # ('Kraków, Poland', 'https://imageserver.webcamera.pl/rec/krakow4/latest.mp4'),
-        # ('Warszawa, Poland', 'https://imageserver.webcamera.pl/rec/warszawa/latest.mp4'),
-        # ('Baltic See, Poland', 'https://imageserver.webcamera.pl/rec/chlopy/latest.mp4'),
-        # ('Mountains, Poland', 'https://imageserver.webcamera.pl/rec/skolnity/latest.mp4'),
-    ]
+    sources = []
+    with open('GuiApp/build/assets/crt_data/cam_selected.csv', 'r') as file:
+        # if file have more than one line
+        reader = csv.reader(file)
+        try:
+
+            next(reader)  # Skip header row
+            for row in reader:
+                try:
+                    row[1] = int(row[1])
+                    sources.append((row[0], row[1]))
+                except:
+                    sources.append((row[0], row[1]))
+        except:
+            sources.append(('me', 0))
+            print(1)
+
+
     print(sources)
       
-    a = App(sources)
+    a = Adding_emp(sources)
     a.root.mainloop()

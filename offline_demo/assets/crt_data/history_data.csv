@@ -1,0 +1,21 @@
+emp_id,name,date,time_stamp,status
+1001,John Doe,2024-03-20,09:00:00,Present
+1002,Jane Smith,2024-03-20,09:05:00,Late
+1003,Michael Johnson,2024-03-20,09:10:00,Present
+1004,Emily Brown,2024-03-20,09:15:00,Present
+1005,David Lee,2024-03-20,09:20:00,Absent
+1001,John Doe,2024-03-20,09:00:00,Present
+1002,Jane Smith,2024-03-20,09:05:00,Late
+1003,Michael Johnson,2024-03-20,09:10:00,Present
+1004,Emily Brown,2024-03-20,09:15:00,Present
+1005,David Lee,2024-03-20,09:20:00,Absent
+1001,John Doe,2024-03-20,09:00:00,Present
+1002,Jane Smith,2024-03-20,09:05:00,Late
+1003,Michael Johnson,2024-03-20,09:10:00,Present
+1004,Emily Brown,2024-03-20,09:15:00,Present
+1005,David Lee,2024-03-20,09:20:00,Absent
+1001,John Doe,2024-03-20,09:00:00,Present
+1002,Jane Smith,2024-03-20,09:05:00,Late
+1003,Michael Johnson,2024-03-20,09:10:00,Present
+1004,Emily Brown,2024-03-20,09:15:00,Present
+1005,David Lee,2024-03-20,09:20:00,Absent

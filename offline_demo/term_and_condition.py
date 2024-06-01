@@ -16,7 +16,7 @@ class tnc:
         self.root.grid_columnconfigure(2, weight=2)
 
         # importing logo image 
-        self.logo = Image.open("GuiApp/build/assets/Logo.png")
+        self.logo = Image.open("offline_demo/assets/Logo.png") 
         # resizing in proportion 
         width, height = self.logo.size
         div_ration = 6
@@ -39,7 +39,7 @@ class tnc:
         self.term_heading.grid(row=0, column=0, sticky="nsew")
 
         # reading terms and conditions from file 
-        with open("GuiApp/build/terms_conditon.txt", "r") as file:
+        with open("offline_demo/terms_conditon.txt", "r") as file:
             self.terms = file.read()
 
             #putting it in scrollable text box and also give scroll bar
@@ -74,18 +74,6 @@ class tnc:
         import collecting_cam
         collecting_cam = collecting_cam.CollectingCam()
         collecting_cam.root.mainloop()
-        
-
-
- 
-
-
-
-
-
-
-
-
 
 
 if __name__ == "__main__":
