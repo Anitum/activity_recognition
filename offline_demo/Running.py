@@ -17,7 +17,7 @@ class Running:
         self.root.grid_columnconfigure(0, weight=1)
 
         # importing logo image
-        self.logo = Image.open("GuiApp/build/assets/Logo.png")
+        self.logo = Image.open("offline_demo/assets/Logo.png")
         # resizing in proportion
         width, height = self.logo.size
         div_ration = 6
@@ -89,7 +89,7 @@ class Running:
         # read files form selectd camera and show feed
 
         sources = []
-        # with open('GuiApp/build/assets/crt_data/cam_selected.csv', 'r') as file:
+        # with open('offline_demo/assets/crt_data/cam_selected.csv', 'r') as file:
         #     # if file have more than one line
         #     reader = csv.reader(file)
         #     try:
