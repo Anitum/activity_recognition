@@ -142,7 +142,7 @@ class tkCamera(tk.Frame):
         print('Select {source}'.format(source=sour))
         # just append to the file 
         
-        with open('GuiApp/build/assets/crt_data/cam_selected.csv', 'a') as file:
+        with open('offline_demo/assets/crt_data/cam_selected.csv', 'a') as file:
             name , path = sour
             writer = csv.writer(file)
             writer.writerow([name, path])
@@ -180,7 +180,7 @@ class Adding_emp:
         
         # Read if there are already cam listed in the file if file not found or it is empty the write fiel 
 
-        self.file_name = 'GuiApp/build/assets/crt_data/cam_selected.csv'
+        self.file_name = 'offline_demo/assets/crt_data/cam_selected.csv'
         
         # Check if the file exists
         if os.path.exists(self.file_name):
@@ -200,7 +200,7 @@ class Adding_emp:
         self.root.grid_columnconfigure(0, weight=1)
 
         # importing logo image
-        self.logo = Image.open("GuiApp/build/assets/Logo.png")
+        self.logo = Image.open("offline_demo/assets/Logo.png")
         # resizing in proportion
         width, height = self.logo.size
         div_ration = 6
@@ -275,7 +275,7 @@ class Adding_emp:
     
     def next(self):
         # first check if something is selected or not 
-        with open('GuiApp/build/assets/crt_data/cam_selected.csv', 'r') as file:
+        with open('offline_demo/assets/crt_data/cam_selected.csv', 'r') as file:
             reader = csv.reader(file)
             next(reader)
             for row in reader:
@@ -340,7 +340,7 @@ if __name__ == '__main__':
         
 
     sources = []
-    with open('GuiApp/build/assets/crt_data/cam_selected.csv', 'r') as file:
+    with open('offline_demo/assets/crt_data/cam_selected.csv', 'r') as file:
         # if file have more than one line
         reader = csv.reader(file)
         try:

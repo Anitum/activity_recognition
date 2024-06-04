@@ -162,7 +162,7 @@ class App:
         self.root.grid_columnconfigure(0, weight=1)
 
         # importing logo image
-        self.logo = Image.open("GuiApp/build/assets/Logo.png")
+        self.logo = Image.open("offline_demo/assets/Logo.png")
         # resizing in proportion
         width, height = self.logo.size
         div_ration = 6

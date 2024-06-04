@@ -18,7 +18,7 @@ class history:
         self.root.grid_columnconfigure(0, weight=1)
 
         # importing logo image
-        self.logo = Image.open("GuiApp/build/assets/Logo.png")
+        self.logo = Image.open("offline_demo/assets/Logo.png")
         # resizing in proportion
         width, height = self.logo.size
         div_ration = 6
@@ -37,7 +37,7 @@ class history:
         self.logo_label = tk.Label(self.frame0, image=self.logo)
         self.logo_label.grid(row=0, column=0, sticky="nsew")
  
-        self.load_data(r"GuiApp/build/assets/crt_data/history_data.csv")
+        self.load_data(r"offline_demo/assets/crt_data/history_data.csv")
         self.display_table()
         # making a label for contact us texr
         self.Running_txt = tk.Label(self.frame0, text="History", font=("Arial", 16), padx=10, pady=10, justify="center")

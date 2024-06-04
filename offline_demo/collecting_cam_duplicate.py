@@ -16,7 +16,7 @@ class CollectingCam:
         self.root.title("Adding Cameras")
 
         # importing logo image
-        self.logo = Image.open("GuiApp/build/assets/Logo.png")
+        self.logo = Image.open("offline_demo/assets/Logo.png")
         # resizing in proportion
         width, height = self.logo.size
         div_ration = 6

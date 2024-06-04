@@ -6,7 +6,7 @@ import csv
 def write_headers_to_csv():
 
     
-    with open('GuiApp/build/assets/crt_data/cam_selected.csv', mode='w', newline='') as file:
+    with open('offline_demo/assets/crt_data/cam_selected.csv', mode='w', newline='') as file:
         writer = csv.writer(file, quoting=csv.QUOTE_NONE)
         writer.writerow(["Name", "Path"])
 

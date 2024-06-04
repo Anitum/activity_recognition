@@ -10,7 +10,7 @@ class SeeFeed:
         self.lastrow = 1
 
         # Importing logo image
-        self.logo = Image.open("GuiApp/build/assets/Logo.png")
+        self.logo = Image.open("offline_demo/assets/Logo.png")
         # Resizing in proportion
         width, height = self.logo.size
         div_ratio = 6
@@ -30,7 +30,7 @@ class SeeFeed:
         self.feed_label.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
         # Read camera indices and paths from CSV
-        self.cameras = self.read_cameras("GuiApp/build/assets/crt_data/cam_index.csv")
+        self.cameras = self.read_cameras("offline_demo/assets/crt_data/cam_index.csv")
         print(len(self.cameras))
 
         # Create frames for camera feeds

@@ -25,7 +25,7 @@ class Removing:
         
 
         # importing logo image
-        self.logo = Image.open("GuiApp/build/assets/Logo.png")
+        self.logo = Image.open("offline_demo/assets/Logo.png")
         # resizing in proportion
         width, height = self.logo.size
         div_ration = 6
@@ -123,7 +123,7 @@ class Removing:
     def load_data(self):
         self.data.clear()
         self.employee_data.clear()
-        with open("GuiApp/build/assets/crt_data/employees.csv", newline='', encoding='utf-8') as csvfile:
+        with open("offline_demo/assets/crt_data/employees.csv", newline='', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 self.data.append((row['emp_id'], row['name']))
