@@ -1,0 +1,29 @@
+{% extends "base_user.html" %}
+{% block baseuser %}
+
+
+
+<h3>Campaign</h3>
+{% for campain in campains %}
+{% include '_campain.html' %}
+{% endfor %}
+<br>
+<hr>
+
+<h3>Campaign</h3>
+{% for campain in campains %}
+{% include '_campain.html' %}
+{% endfor %}
+<br>
+<hr>
+
+<h3>Falgged influencer </h3>
+{% for ad in ads %}
+{% include '_ads.html' %}
+{% endfor %}
+<br>
+<hr>
+
+
+
+{% endblock %} 

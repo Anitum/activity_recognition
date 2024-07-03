@@ -1,0 +1,57 @@
+
+<html>
+    <head>
+        {% if title %}
+        <title>{{ title }} - Connect me</title>
+        {% else %}
+        <title>Welcome to Connect me</title>
+        {% endif %}
+    </head>
+    <body>
+        <div>
+            Connect me:
+            <!-- <a href={{url_for('index')}}>Home</a> -->
+            
+            {% if current_user.is_anonymous %}
+            <a href="{{ url_for('login') }}">Login</a>
+            
+            {% else %}
+
+            {%if current_user.__repr__()[1:3] == 'Sp'%}
+            <a href="{{ url_for('sponcer', username=current_user.username) }}">Profile</a>
+            <a href="{{ url_for('sponcerfind', username=current_user.username) }}">Find</a>
+            <a href="{{ url_for('sponcercampain', username=current_user.username) }}">Campaign</a>
+            <a href="{{ url_for('sponcerstats', username=current_user.username) }}">Stats</a>
+
+            {% endif %}
+
+            {%if current_user.__repr__()[1:3] == 'In'%}
+            <a href="{{ url_for('influencer', username=current_user.username) }}">Profile</a>
+            <a href="{{ url_for('influencerfind', username=current_user.username) }}">Find</a>
+            <a href="{{ url_for('influencerstats', username=current_user.username) }}">Stats</a>
+            
+            {% endif %}
+
+            {%if current_user.__repr__()[1:3] == 'ad'%}
+            <a href="{{ url_for('admin', username=current_user.username) }}">Profile</a>
+            <a href="{{ url_for('adminfind', username=current_user.username) }}">Find</a>
+            <a href="{{ url_for('adminstats', username=current_user.username) }}">Stats</a>
+
+            {% endif %}
+
+
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% endif %}
+        <hr>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    {% block content %}{% endblock %}
+    </body>
+</html>

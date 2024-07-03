@@ -1,0 +1,21 @@
+<table>
+    <tr valign="top">
+        <td><img src="{{ campain.profilePicture(36) }}"></td>
+        <td>{{ campain.name}} :<br>{{ campain.description}}</td>
+        {%if current_user.__repr__()[1:3] == 'Ad'%}
+        <td><a href="{{ url_for('index', campain_id=campain.id) }}">Flag</a></td>
+        <td><a href="{{ url_for('index', campain_id=campain.id) }}">View</a></td>
+        {% endif %}
+
+
+        {%if current_user.__repr__()[1:3] == 'In'%}
+        <td><a href="{{ url_for('index', campain_id=campain.id) }}">Request</a></td>
+        <td><a href="{{ url_for('index', campain_id=campain.id) }}">View</a></td>
+        {% endif %}
+
+        {%if current_user.__repr__()[1:3] == 'Sp'%}
+        <td><a href="{{ url_for('CampainProfilePage',  username = current_user.username, campainId=campain.id) }}">View</a></td>
+        {% endif %}
+
+    </tr>
+</table> 

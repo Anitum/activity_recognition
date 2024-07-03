@@ -1,0 +1,13 @@
+<html>
+<head>
+    <title>Confirm Delete Account</title>
+</head>
+<body>
+    <h1>Confirm Delete Account</h1>
+    <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+    <form method="post" action="{{ url_for('delete_user') }}">
+        <button type="submit">Delete my account</button>
+    </form>
+    <a href="{{ url_for('index') }}">Cancel</a>
+</body>
+</html>

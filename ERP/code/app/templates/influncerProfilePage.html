@@ -1,0 +1,20 @@
+{% extends "base_user.html" %}
+{% block baseuser %}
+
+
+{% if user == current_user %}
+<p><a href="{{ url_for('editinfluncer') }}">Edit profile page</a></p>
+{% endif %}
+<hr>
+
+<h3>Running Advertisement</h3>
+{% for ad in ads %}
+{% include '_ads.html' %}
+{% endfor %}
+<br>
+<hr>
+
+
+
+
+{% endblock %} 

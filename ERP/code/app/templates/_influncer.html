@@ -1,0 +1,21 @@
+<table>
+    <tr valign="top">
+        <td><img src="{{ influncer.profilePicture(36) }}"></td>
+        <td>{{ influncer.name}} :<br>{{ influncer.description}}</td>
+        {%if current_user.__repr__()[1:3] == 'Ad'%}
+        <td><a href="{{ url_for('index', influncer_id=influncer.id) }}">Flag</a></td>
+        <td><a href="{{ url_for('index', influncer_id=influncer.id) }}">View</a></td>
+        {% endif %}
+
+
+        {%if current_user.__repr__()[1:3] == 'In'%}
+        <td><a href="{{ url_for('index', influncer_id=influncer.id) }}">Request</a></td>
+        <td><a href="{{ url_for('index', influncer_id=influncer.id) }}">View</a></td>
+        {% endif %}
+
+        {%if current_user.__repr__()[1:3] == 'Sp'%}
+        <td><a href="{{ url_for('index', influncer_id=influncer.id) }}">View</a></td>
+        {% endif %}
+
+    </tr>
+</table>

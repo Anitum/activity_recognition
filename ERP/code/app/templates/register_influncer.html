@@ -1,0 +1,40 @@
+{% extends "register_base.html" %}
+{% block regcontent %}
+<p>
+    {{ form.niche.label }} <br>
+    {{ form.niche(size=32) }}<br>
+    {% for error in form.niche.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+<p>
+    {{ form.youtube.label }}
+    {{ form.youtube(size=10) }}<br>
+    {% for error in form.password2.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+<p>
+    {{ form.insta.label }}
+    {{ form.insta(size=10) }}<br>
+    {% for error in form.password2.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+<p>
+    {{ form.facebook.label }}
+    {{ form.facebook(size=10) }}<br>
+    {% for error in form.password2.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+
+
+<p>
+    {{ form.min_budget.label }}
+    {{ form.min_budget(size=10) }}<br>
+    {% for error in form.password2.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+{% endblock %}

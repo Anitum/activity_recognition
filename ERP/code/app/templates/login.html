@@ -1,0 +1,47 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Login</h1>
+<form action = "" method = "post" novalidate>
+    {{form.hidden_tag()}}   <!-- this create a hidden token which protects of  Cross-Site Request Forgery or CSRF -->
+    <p>
+        {{ form.role.label }}<br>
+        {{ form.role }}
+        {% for error in form.role.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.username.label }} <br>
+        {{ form.username(size=32) }}   <br>
+        {% for error in form.username.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.password.label }} <br>
+        {{ form.password(size=32) }}   <br>
+        {% for error in form.password.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.remember_me() }} {{ form.remember_me.label }}
+    </p>
+    <p>{{ form.submit() }}</p>
+
+    <p>New user? Register as<br>
+    <a href = "{{ url_for('registerinfluncer') }}">Influncer</a><br>
+    <a href = "{{ url_for('registersponcer') }}">Sponcer</a>
+    </p>
+
+   
+
+
+
+</form>
+
+
+{% endblock %}

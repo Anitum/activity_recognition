@@ -1,0 +1,22 @@
+{% extends "base_user.html" %}
+{% block baseuser %}
+
+{% if user == current_user %}
+<p><a href="{{ url_for('editsponcer') }}">Edit profile page</a></p>
+{% endif %}
+<hr>
+
+<h3>Campaign</h3>
+{% for campain in campains %}
+{% include '_campain.html' %}
+{% endfor %}
+<br>
+<hr>
+
+<h3>Influncer</h3>
+
+{% for influncer in influncers %}
+{% include '_influncer.html' %}
+{% endfor %}
+
+{% endblock %}

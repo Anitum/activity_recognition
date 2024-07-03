@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Statistics for {{ user.name }}</h1>
+
+<h2>Total Number of Sponsors: {{ total_sponsors }}</h2>
+<h2>Total Number of Influencers: {{ total_influencers }}</h2>
+
+<h3>Spending Distribution Across Sponsors</h3>
+<img src="data:image/png;base64,{{ spending_plot_url }}" alt="Spending Distribution">
+
+<h3>Income of Influencers</h3>
+<img src="data:image/png;base64,{{ income_plot_url }}" alt="Income Distribution">
+
+<h3>Most Popular Influencer</h3>
+<p>Name: {{ most_popular_influencer.name }}</p>
+<p>Followers: {{ most_popular_influencer.youtube + most_popular_influencer.insta + most_popular_influencer.facebook }}</p>
+<img src="{{ most_popular_influencer.profilePicture(200) }}" alt="Profile Picture">
+
+<h3>Sponsor with the Biggest Budget</h3>
+<p>Name: {{ biggest_budget_sponsor.name }}</p>
+<p>Total Budget: ${{ biggest_budget_total }}</p>
+
+<h3>Follower Distribution of Most Popular Influencer</h3>
+<img src="data:image/png;base64,{{ follower_distribution_url }}" alt="Follower Distribution">
+
+<h3>Sponsor Budget Scatter Plot</h3>
+<img src="data:image/png;base64,{{ sponsor_budget_scatter_url }}" alt="Sponsor Budget Scatter Plot">
+
+{% endblock %}
