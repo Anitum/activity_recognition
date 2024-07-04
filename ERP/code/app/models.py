@@ -8,155 +8,274 @@ from app import db, login
 
 
 
-# Define your models
-db.ForeignKeyConstraint(['camp_id'], ['campaign.id'])
-db.ForeignKeyConstraint(['spons_index'], ['sponcer.id'])
-db.ForeignKeyConstraint(['ads'], ['advertisement.id'])
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_redis import FlaskRedis
+from sqlalchemy import Column, Integer, String, Date, Float, JSON, ForeignKey, DECIMAL, TIMESTAMP
+from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy.sql import func
+import os
 
-@login.user_loader
-def load_user(id):
-    return Sponcer.query.get(int(id))
+app = Flask(__name__)
 
-class Sponcer(UserMixin, db.Model):
-    __tablename__ = 'sponcer'
-    id = db.Column(db.Integer, primary_key=True)
-    flagged = db.Column(db.Boolean, default=False)
-    username = db.Column(db.String(255), nullable=False, unique=True)
-    name = db.Column(db.String(255), nullable=False)
-    image = db.Column(db.String(255), nullable=True)
-    description = db.Column(db.String(255), nullable=True)
-    industry =  db.Column(db.String(255), nullable=True)
-    rating = db.Column(db.Integer, nullable=True, server_default="0") 
+# Configure SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///your_database.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Configure Redis
+app.config['REDIS_URL'] = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
 
-    password_hash = db.Column(db.String(255), nullable=True)
+# Initialize extensions
+db = SQLAlchemy(app)
+redis_client = FlaskRedis(app)
 
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+Base = declarative_base()
 
-    def __repr__(self):
-        return '<Sponcer %r>' % self.name
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    first_name = Column(String(255), nullable=False)
+    last_name = Column(String(255), nullable=False)
+    username = Column(String(255), nullable=False, unique=True)
+    dob = Column(Date, nullable=False)
+    date_of_joining = Column(Date, nullable=False)
+    password = Column(String(255), nullable=False)
+    performance_score = Column(Float(53), nullable=False)
+    identity_verification_document = Column(JSON, nullable=False)
+    facility_id = Column(Integer, ForeignKey('facilities.id', ondelete='CASCADE'), nullable=False)
+    address_id = Column(Integer, ForeignKey('addresses.id', ondelete='CASCADE'), nullable=False)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
     
+    type = Column(String(50))
 
-    def profilePicture(self, size):
-        # not perfect, but it works
-                                                                                        #Todo make it work 
-        return 'https://www.gravatar.com/avatar/' + md5((self.username +'@gmail.com' ).lower().encode('utf-8')).hexdigest() + '?d=identicon&s=' + str(size)
+    __mapper_args__ = {
+        'polymorphic_identity': 'user',
+        'polymorphic_on': type
+    }
 
+    facility = relationship('Facility', back_populates='users')
+    address = relationship('Address', back_populates='users')
+
+class Employee(User):
+    __tablename__ = 'employees'
+
+    id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    salary = Column(DECIMAL(10, 2), nullable=False)
+    bonus = Column(DECIMAL(10, 2), nullable=False)
+    department_id = Column(Integer, ForeignKey('departments.id', ondelete='CASCADE'), nullable=False)
+    additional_responsibility_id = Column(Integer, ForeignKey('additional_responsibilities.id', ondelete='SET NULL'))
+    salary_account = Column(JSON, nullable=False)
+    qualification_document = Column(JSON, nullable=False)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'employee',
+    }
+
+    department = relationship('Department', back_populates='employees')
+    additional_responsibility = relationship('AdditionalResponsibility', back_populates='employees')
+
+class Teacher(Employee):
+    __tablename__ = 'teachers'
+
+    id = Column(Integer, ForeignKey('employees.id'), primary_key=True)
+    section_id = Column(Integer, ForeignKey('sections.id', ondelete='CASCADE'), nullable=False)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'teacher',
+    }
+
+    section = relationship('Section', back_populates='teachers')
+
+class Manager(Employee):
+    __tablename__ = 'managers'
+
+    id = Column(Integer, ForeignKey('employees.id'), primary_key=True)
+    team_size = Column(Integer, nullable=False)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'manager',
+    }
+
+class PublicRelation(Employee):
+    __tablename__ = 'public_relations'
+
+    id = Column(Integer, ForeignKey('employees.id'), primary_key=True)
+    conversion_rate = Column(Float(53), nullable=False)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'public_relation',
+    }
+
+class HelpingStaff(Employee):
+    __tablename__ = 'helping_staff'
+
+    id = Column(Integer, ForeignKey('employees.id'), primary_key=True)
+    role = Column(String(255), nullable=False)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'helping_staff',
+    }
+
+class Driver(Employee):
+    __tablename__ = 'drivers'
+
+    id = Column(Integer, ForeignKey('employees.id'), primary_key=True)
+    license_number = Column(String(255), nullable=False)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'driver',
+    }
+
+class Guard(Employee):
+    __tablename__ = 'guards'
+
+    id = Column(Integer, ForeignKey('employees.id'), primary_key=True)
+    shift = Column(String(255), nullable=False)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'guard',
+    }
+
+class Student(User):
+    __tablename__ = 'students'
+
+    id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    section_id = Column(Integer, ForeignKey('sections.id', ondelete='CASCADE'), nullable=False)
+    fees = Column(DECIMAL(10, 2), nullable=False)
+    pending_fees = Column(DECIMAL(10, 2), nullable=False)
+    date_of_billing = Column(Date, nullable=False)
+    picture = Column(JSON, nullable=False)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'student',
+    }
+
+    section = relationship('Section', back_populates='students')
+
+class Parent(User):
+    __tablename__ = 'parents'
+
+    id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    education_level = Column(String(255), nullable=False)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'parent',
+    }
+
+class Owner(User):
+    __tablename__ = 'owners'
+
+    id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    ownership_percentage = Column(Float(53), nullable=False)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'owner',
+    }
+
+class Admin(User):
+    __tablename__ = 'admins'
+
+    id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    access_level = Column(String(255), nullable=False)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'admin',
+    }
+
+# Other models (not inheriting from User)
+
+class Material(Base):
+    __tablename__ = 'materials'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(255), nullable=False)
+    price = Column(DECIMAL(10, 2), nullable=False)
+    emp_issue_id = Column(Integer, ForeignKey('employees.id', ondelete='SET NULL'))
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
+
+    emp_issue = relationship('Employee', back_populates='materials')
+
+class AdditionalResponsibility(Base):
+    __tablename__ = 'additional_responsibilities'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(255), nullable=False)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
+
+    employees = relationship('Employee', back_populates='additional_responsibility')
+
+class Section(Base):
+    __tablename__ = 'sections'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    total_students = Column(Integer, nullable=False)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
+
+    students = relationship('Student', back_populates='section')
+    teachers = relationship('Teacher', back_populates='section')
+
+class Address(Base):
+    __tablename__ = 'addresses'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    address_line = Column(String(255), nullable=False)
+    city = Column(String(255), nullable=False)
+    state = Column(String(255), nullable=False)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
+
+    users = relationship('User', back_populates='address')
+    facilities = relationship('Facility', back_populates='address')
+
+class Facility(Base):
+    __tablename__ = 'facilities'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    address_id = Column(Integer, ForeignKey('addresses.id', ondelete='CASCADE'), nullable=False)
+    revenue_generated_per_month = Column(DECIMAL(10, 2), nullable=False)
+    expense = Column(DECIMAL(10, 2), nullable=False)
+    rent = Column(DECIMAL(10, 2), nullable=False)
+    area = Column(Integer, nullable=False)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
+
+    address = relationship('Address', back_populates='facilities')
+    users = relationship('User', back_populates='facility')
+
+class Department(Base):
+    __tablename__ = 'departments'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(255), nullable=False)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
+
+    employees = relationship('Employee', back_populates='department')
+
+# Example route using both SQLAlchemy and Redis
+@app.route('/user/<int:user_id>')
+def get_user(user_id):
+    # Try to get user from Redis cache first
+    cached_user = redis_client.get(f'user:{user_id}')
+    if cached_user:
+        return cached_user.decode('utf-8')
     
+    # If not in cache, get from database
+    user = User.query.get(user_id)
+    if user:
+        user_data = f"{user.first_name} {user.last_name}"
+        # Cache the result in Redis for 1 hour (3600 seconds)
+        redis_client.setex(f'user:{user_id}', 3600, user_data)
+        return user_data
+    return "User not found", 404
 
-class Advertisement(db.Model):
-    __tablename__ = 'advertisement'
-    id = db.Column(db.Integer, primary_key=True )
-    flagged = db.Column(db.Boolean, default=False)
-    name = db.Column(db.String(255), nullable=False)
-    description = db.Column(db.String(255), nullable=True)
-    term = db.Column(db.JSON, nullable=False)
-    payment = db.Column(db.Integer, nullable=False)
-    influencer_id = db.Column(db.Integer, nullable=False)
-    camp_id = db.Column(db.Integer, db.ForeignKey('campaign.id'), nullable=False)
-    rating = db.Column(db.Integer, nullable=True, server_default="0") 
-    statusAccepted = db.Column(db.String(4), nullable=True)
-    done = db.Column(db.Boolean, default=False)
-    
-
-
-    def __repr__(self):
-        return '<Advertisement %r>' % self.name
-            
-    def profilePicture(self, size):
-        # not perfect, but it works
-                                                                                        #Todo make it work 
-        return 'https://www.gravatar.com/avatar/' + md5((self.name +'@gmail.com' ).lower().encode('utf-8')).hexdigest() + '?d=identicon&s=' + str(size)
-
-class Campaign(db.Model):
-    __tablename__ = 'campaign'
-    id = db.Column(db.Integer, primary_key=True)
-    flagged = db.Column(db.Boolean, default=False)
-    name = db.Column(db.String(255), nullable=False)
-    image = db.Column(db.String(255), nullable=True)
-    description = db.Column(db.String(255), nullable=True)
-    start_date = db.Column(db.Date, nullable=False)
-    end_date = db.Column(db.Date, nullable=False)
-    visibility = db.Column(db.String(255), nullable=False)
-    goals = db.Column(db.JSON, nullable=True)
-    budget = db.Column(db.Float, nullable=False)
-    spons_index = db.Column(db.Integer, db.ForeignKey('sponcer.id'), nullable=False)
-    niche = db.Column(db.String(255), nullable=True)
-    rating = db.Column(db.Integer, nullable=True, server_default="0") 
-
-
-    def __repr__(self) -> str:
-        return '<Campaign %r>' % self.name
-        
-    def profilePicture(self, size):
-        # not perfect, but it works
-                                                                                        #Todo make it work 
-        return 'https://www.gravatar.com/avatar/' + md5((self.name +'@gmail.com' ).lower().encode('utf-8')).hexdigest() + '?d=identicon&s=' + str(size)
-
-
-class Influencer(UserMixin, db.Model):
-    __tablename__ = 'influencer'
-    id = db.Column(db.Integer, primary_key=True, autoincrement='auto')
-    flagged = db.Column(db.Boolean, default=False)
-    username = db.Column(db.String(255), nullable=False, unique=True)
-    name = db.Column(db.String(255), nullable=False)
-
-    description = db.Column(db.String(255), nullable=True)
-    image = db.Column(db.String(255), nullable=True)
-    youtube = db.Column(db.Integer, nullable=False)
-    insta = db.Column(db.Integer, nullable=False)
-    facebook = db.Column(db.Integer, nullable=False)
-    min_budget = db.Column(db.Integer, nullable=False)
-    ads = db.Column(db.Integer, db.ForeignKey('advertisement.id'), nullable=True)
-    industry =  db.Column(db.String(255), nullable=True)
-    niche = db.Column(db.String(255), nullable=True)
-    rating = db.Column(db.Integer, nullable=True, server_default="0") 
-
-
-    password_hash = db.Column(db.String(255), nullable=True)
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-    def __repr__(self) -> str:
-        return '<Influencer %r>' % self.name
-            
-    def profilePicture(self, size):
-        # not perfect, but it works
-                                                                                        #Todo make it work 
-        return 'https://www.gravatar.com/avatar/' + md5((self.name +'@gmail.com' ).lower().encode('utf-8')).hexdigest() + '?d=identicon&s=' + str(size)
-    
-class Admin(UserMixin, db.Model):
-    __tablename__ = 'admin'
-
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255), nullable=False, unique=True)
-    name = db.Column(db.String(255), nullable=False)
-    description = db.Column(db.String(255), nullable=True)
-    rating = db.Column(db.Integer, nullable=True, server_default="0") 
-
-
-
-    password_hash = db.Column(db.String(255), nullable=True)
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-            
-    def profilePicture(self, size):
-        # not perfect, but it works
-                                                                                        #Todo make it work 
-        return 'https://www.gravatar.com/avatar/' + md5((self.name +'@gmail.com' ).lower().encode('utf-8')).hexdigest() + '?d=identicon&s=' + str(size)
-
-    def __repr__(self):
-        return '<admin %r>' % self.name
-    
-
+if __name__ == '__main__':
+    app.run(debug=True)
     
     
 
